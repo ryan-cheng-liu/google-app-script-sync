@@ -7,7 +7,9 @@ var DEPLOYMENT_ID = "deployment_id";
 
 var GITHUB_PROJECT = "github_project";
 var MASTER_PROJECT = "master_project";
+var MASTER_DEPLOYMENT_ID = "master_deployment_id";
 var TEST_PROJECT = "test_project";
+var TEST_DEPLOYMENT_ID = "test_deployment_id";
 
 var ACCESS_TOKEN = "access_token";
 var ACCESS_TOKEN_EXPIRE_TIME = "access_token_expire_time";
@@ -155,7 +157,7 @@ function getFilesFromGithub(githubProject, branch) {
     return files;
 }
 
-function deployProject(projectId) {
+function deployProject(projectId, deploymentId) {
     var response;
     var scriptProperties = PropertiesService.getScriptProperties();
 
@@ -170,7 +172,6 @@ function deployProject(projectId) {
     var versionNumber = JSON.parse(response.getContentText()).versionNumber;
 
     // deploy new version
-    var deploymentId = scriptProperties.getProperty(DEPLOYMENT_ID);
     var deployUrl = "https://script.googleapis.com/v1/projects/" + projectId + "/deployments/" + deploymentId;
     UrlFetchApp.fetch(deployUrl, {
         headers: {'Authorization': tokenType + " " + token, 'Content-Type': 'text/plain'},
@@ -186,19 +187,22 @@ function deployProject(projectId) {
 function doPost(request) {
     var projectId, branch;
     var scriptProperties = PropertiesService.getScriptProperties();
+    var deploymentId;
 
     // master server
     projectId = scriptProperties.getProperty(MASTER_PROJECT);
+    deploymentId = scriptProperties.getProperty(MASTER_DEPLOYMENT_ID);
     if (projectId) {
         updateProjectFiles(projectId);
-        deployProject(projectId);
+        deployProject(projectId, deploymentId);
     }
 
     // test server
     projectId = scriptProperties.getProperty(TEST_PROJECT);
+    deploymentId = scriptProperties.getProperty(TEST_DEPLOYMENT_ID);
     if (projectId) {
         branch = 'test';
         updateProjectFiles(projectId, branch);
-        deployProject(projectId);
+        deployProject(projectId, deploymentId);
     }
 }

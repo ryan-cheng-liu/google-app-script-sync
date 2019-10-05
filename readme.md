@@ -30,7 +30,8 @@ Sync your github project to google app script
         Get the deploy link like "https://script.google.com/marcos/s/{YOUR_DEPLOYMENT_ID}}/exec"
         and get YOUR_DEPLOYMENT_ID.
 
-8. Back to your github-sync project, Create properties named [deployment_id], and paste your deployment id.
+8. Back to your github-sync project, Create properties named [master_deployment_id], and paste your deployment id.
+    For test project, create [test_deployment_id].
 
 9. You're done! when somebody push at the github repo,
     Your google app script will sync and deploy.
